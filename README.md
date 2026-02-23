@@ -56,10 +56,10 @@ ansible-playbook playboos/k3d-role-test.yaml
 **Installation via Galaxy (si publié) :**
 
 ```bash
-ansible-galaxy à faire
+ansible-galaxy role install Naen15.k3d-deploy
 ```
 
-Puis dans un playbook : `roles: [à faire]`.
+Puis dans un playbook : `roles: [ansible-galaxy role install Naen15.k3d-deploy]`.
 
 ## Prérequis
 
