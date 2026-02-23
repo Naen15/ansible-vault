@@ -27,8 +27,8 @@ Rôle Ansible (Exercice 34) pour déployer un cluster **k3d** et une application
 ## Installation
 
 ```bash
-git a faire
-cd k3d-deploy
+git clone https://github.com/Naen15/k3d-deploy
+cd projet/k3d-deploy
 ```
 
 ## Utilisation
