@@ -1,70 +1,34 @@
-# k3d-deploy
+# Déploiement Sécurisé - MonAppSecurisee (Ansible Vault)
 
-Rôle Ansible (Exercice 34) pour déployer un cluster **k3d** et une application **Nginx** (ConfigMap + Deployment + Service NodePort). Conçu pour être exécuté **dans le conteneur Ansible** (`hosts: client1`).
-
-## Structure du rôle
-
-```
-.
-├── defaults/main.yml   # Variables (nom du cluster, node port, texte page)
-├── tasks/main.yml      # Tâches (kubectl, k3d, cluster, manifest, apply)
-├── templates/          # Manifest Kubernetes (Nginx)
-│   └── nginx.yaml.j2
-├── meta/main.yml       # Métadonnées (Galaxy, plateformes, tags)
-├── k3d-role-test.yaml  # Exemple d’utilisation du rôle
-└── README.md
-```
-
-## Variables (defaults)
-
-| Variable             | Défaut                                                  | Description               |
-| -------------------- | ------------------------------------------------------- | ------------------------- |
-| `k3d_cluster_name`   | `k3d-lab`                                               | Nom du cluster k3d        |
-| `k3d_node_port`      | `30080`                                                 | NodePort du service Nginx |
-| `k3d_nginx_title`    | `Bienvenue dans le k3d LAB déployé via un rôle ansible` | Titre de la page HTML     |
-| `k3d_nginx_subtitle` | `Deploye automatiquement avec Ansible !`                | Sous-titre                |
-
-## Installation
-
-```bash
-git clone https://github.com/Naen15/k3d-deploy
-cd projet/k3d-deploy
-```
-
-## Utilisation
-
-**Depuis la racine du repo (conteneur Ansible recommandé) :**
-
-```bash
-cd projet
-ansible-playbook playboos/k3d-role-test.yaml
-```
-
-**Avec variables :**
-
-```yaml
-- hosts: client1
-  connection: local
-  gather_facts: false
-  roles:
-    - role: .
-  vars:
-    k3d_cluster_name: "mon-cluster"
-    k3d_node_port: 30081
-```
-
-**Installation via Galaxy (si publié) :**
-
-```bash
-ansible-galaxy role install Naen15.k3d-deploy
-```
-
-Puis dans un playbook : `roles: [ansible-galaxy role install Naen15.k3d-deploy]`.
+Ce projet automatise le déploiement de l'application interne **MonAppSecurisee** sur des serveurs Linux (Ubuntu/Rocky) en utilisant **Ansible Vault** pour garantir qu'aucun secret (mots de passe, clés API, tokens) n'apparaisse en clair dans le code.
 
 ## Prérequis
 
-- Conteneur ou machine avec **Docker** et socket monté (`/var/run/docker.sock`) pour k3d.
-- utilisé le docker de la machine locale
-- Linux (k3d/kubectl en binaire Linux).
+Avant de lancer le déploiement, assurez-vous que le contrôleur Ansible dispose des éléments suivants :
 
-L’application est accessible sur **http://localhost:30080** (ou le `k3d_node_port` choisi).
+1.  **Ansible** installé.
+2.  **Bibliothèque Python `passlib`** (nécessaire pour le hachage des mots de passe utilisateurs).
+    ```bash
+    # Installation sur Debian/Ubuntu
+    apt install python3-passlib
+    # Installation sur RHEL/Rocky
+    dnf install python3-passlib
+    # Ou via pip (si géré)
+    pip install passlib
+    ```
+
+## Structure du Projet
+
+```text
+projet/
+├── playbooks/
+│   └── vault-role.yaml        # Playbook principal
+├── roles/
+│   └── ansible-vault/
+│       ├── defaults/main.yml  # Vars par défaut + pwd utilisateur chiffré (inline)
+│       ├── vars/main.yml      # Vars sensibles entièrement chiffrées (DB, API)
+│       ├── tasks/main.yml     # Instructions de déploiement
+│       └── templates/
+│           └── app_config.conf.j2 # Modèle de configuration
+└── inventory.ini              # Inventaire (non inclus dans ce repo)
+```
